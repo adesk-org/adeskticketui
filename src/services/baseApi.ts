@@ -1,11 +1,15 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "../store";
 
 export const baseApi = createApi({
     baseQuery: async (args, api, extraOptions) => {
         const state = api.getState() as RootState;
-        const baseUrl = state.settings.baseUrl;
+        const isDev: boolean = import.meta.env.DEV;
+        const ticketsvcBaseUrl: string = isDev
+            ? "/api"
+            : state.settings.ticketsvcBaseUrl;
         return fetchBaseQuery({
-            baseUrl,
+            baseUrl: ticketsvcBaseUrl,
             prepareHeaders: (headers) => {
                 const token = state.settings.token;
                 const tenantId = state.settings.tenantId;

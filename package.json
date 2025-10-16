@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "generate-api": "openapi -i ./openapi/adeskticketsvc.openapi.yaml -o ./src/generated --client axios --useUnionTypes true",
+    "generate-rtk": "rtk-query-codegen-openapi rtkq.config.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -7,7 +7,7 @@ export interface SettingsState {
 }
 
 const initial: SettingsState = {
-    ticketsvcBaseUrl: "http://localhost:4000",
+    ticketsvcBaseUrl: "http://localhost:8080",
     token: localStorage.getItem("token") ?? "",
     tenantId: localStorage.getItem("tenantId") ?? "",
 };
