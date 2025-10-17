@@ -43,6 +43,55 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    listNotes: build.query<ListNotesApiResponse, ListNotesApiArg>({
+      query: (queryArg) => ({
+        url: `/tickets/${queryArg.ticketId}/notes`,
+        headers: {
+          "X-Tenant-Id": queryArg["X-Tenant-Id"],
+        },
+        params: {
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+        },
+      }),
+    }),
+    createNote: build.mutation<CreateNoteApiResponse, CreateNoteApiArg>({
+      query: (queryArg) => ({
+        url: `/tickets/${queryArg.ticketId}/notes`,
+        method: "POST",
+        body: queryArg.noteCreate,
+        headers: {
+          "X-Tenant-Id": queryArg["X-Tenant-Id"],
+        },
+      }),
+    }),
+    getNote: build.query<GetNoteApiResponse, GetNoteApiArg>({
+      query: (queryArg) => ({
+        url: `/tickets/${queryArg.ticketId}/notes/${queryArg.noteId}`,
+        headers: {
+          "X-Tenant-Id": queryArg["X-Tenant-Id"],
+        },
+      }),
+    }),
+    updateNote: build.mutation<UpdateNoteApiResponse, UpdateNoteApiArg>({
+      query: (queryArg) => ({
+        url: `/tickets/${queryArg.ticketId}/notes/${queryArg.noteId}`,
+        method: "PATCH",
+        body: queryArg.noteUpdate,
+        headers: {
+          "X-Tenant-Id": queryArg["X-Tenant-Id"],
+        },
+      }),
+    }),
+    deleteNote: build.mutation<DeleteNoteApiResponse, DeleteNoteApiArg>({
+      query: (queryArg) => ({
+        url: `/tickets/${queryArg.ticketId}/notes/${queryArg.noteId}`,
+        method: "DELETE",
+        headers: {
+          "X-Tenant-Id": queryArg["X-Tenant-Id"],
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -82,6 +131,54 @@ export type UpdateTicketApiArg = {
   "X-Tenant-Id": string;
   ticketUpdate: TicketUpdate;
 };
+export type ListNotesApiResponse =
+  /** status 200 List of notes (ordered by seq asc) */ NoteList;
+export type ListNotesApiArg = {
+  /** Ticket UUID */
+  ticketId: string;
+  /** Tenant identifier (organization or workspace ID) */
+  "X-Tenant-Id": string;
+  /** Page size (1–1000) */
+  limit?: number;
+  /** Items to skip */
+  offset?: number;
+};
+export type CreateNoteApiResponse = /** status 201 Created */ Note;
+export type CreateNoteApiArg = {
+  /** Ticket UUID */
+  ticketId: string;
+  /** Tenant identifier (organization or workspace ID) */
+  "X-Tenant-Id": string;
+  noteCreate: NoteCreate;
+};
+export type GetNoteApiResponse = /** status 200 Note */ Note;
+export type GetNoteApiArg = {
+  /** Ticket UUID */
+  ticketId: string;
+  /** Note UUID */
+  noteId: string;
+  /** Tenant identifier (organization or workspace ID) */
+  "X-Tenant-Id": string;
+};
+export type UpdateNoteApiResponse = /** status 200 Updated note */ Note;
+export type UpdateNoteApiArg = {
+  /** Ticket UUID */
+  ticketId: string;
+  /** Note UUID */
+  noteId: string;
+  /** Tenant identifier (organization or workspace ID) */
+  "X-Tenant-Id": string;
+  noteUpdate: NoteUpdate;
+};
+export type DeleteNoteApiResponse = unknown;
+export type DeleteNoteApiArg = {
+  /** Ticket UUID */
+  ticketId: string;
+  /** Note UUID */
+  noteId: string;
+  /** Tenant identifier (organization or workspace ID) */
+  "X-Tenant-Id": string;
+};
 export type TicketStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 export type Ticket = {
   id: string;
@@ -89,14 +186,17 @@ export type Ticket = {
   description: string;
   status: TicketStatus;
   assignee?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 export type TicketList = {
   total: number;
   limit: number;
   offset: number;
   items: Ticket[];
+};
+export type Error = {
+  detail?: string | string[];
 };
 export type TicketCreate = {
   title: string;
@@ -107,9 +207,42 @@ export type TicketUpdate = {
   status?: TicketStatus;
   assignee?: string | null;
 };
+export type Note = {
+  id: string;
+  ticketId: string;
+  /** Monotonic per ticket (1,2,3,...) */
+  seq: number;
+  /** Note body text */
+  content: string;
+  authorName?: string | null;
+  isPrivate: boolean;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt?: string | null;
+};
+export type NoteList = {
+  total: number;
+  limit: number;
+  offset: number;
+  items: Note[];
+};
+export type NoteCreate = {
+  content: string;
+  authorName?: string | null;
+  isPrivate?: boolean;
+};
+export type NoteUpdate = {
+  content?: string;
+  isPrivate?: boolean;
+};
 export const {
   useListTicketsQuery,
   useCreateTicketMutation,
   useGetTicketQuery,
   useUpdateTicketMutation,
+  useListNotesQuery,
+  useCreateNoteMutation,
+  useGetNoteQuery,
+  useUpdateNoteMutation,
+  useDeleteNoteMutation,
 } = injectedRtkApi;
