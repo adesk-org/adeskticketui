@@ -12,6 +12,11 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ""),
             },
+            "/realtime": {
+                target: "http://localhost:8081",
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/realtime/, ""),
+            },
         },
     },
 });

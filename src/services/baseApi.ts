@@ -24,5 +24,6 @@ export const baseApi = createApi({
             },
         })(args, api, extraOptions);
     },
+    tagTypes: ["Ticket", "Tickets"],
     endpoints: () => ({}),
 });
