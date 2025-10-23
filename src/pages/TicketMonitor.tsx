@@ -1,5 +1,6 @@
 // src/pages/TicketMonitor.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTicketModal } from "../components/TicketModalContext";
 
 /**
  * Adjust these to your environment.
@@ -69,6 +70,7 @@ export default function TicketMonitor() {
 
     const ticketsArray = useMemo(() => Array.from(tickets.values()), [tickets]);
     const eventSourceRef = useRef<EventSource | null>(null);
+    const { open } = useTicketModal();
 
     // Initial load of tickets
     useEffect(() => {
@@ -115,7 +117,6 @@ export default function TicketMonitor() {
         };
     }, [tenantId, token]);
 
-    // Live updates via SSE
     // Live updates via SSE
     useEffect(() => {
         const qs = new URLSearchParams();
@@ -282,8 +283,10 @@ export default function TicketMonitor() {
                                 .map((t) => (
                                     <tr
                                         key={t.id}
+                                        onClick={() => open(t.id)}
                                         style={{
                                             borderTop: "1px solid #f1f1f1",
+                                            cursor: "pointer",
                                         }}
                                     >
                                         <Td mono title={t.id}>

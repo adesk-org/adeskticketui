@@ -4,7 +4,11 @@ import {
     type TicketStatus,
 } from "../services/tickets.generated";
 
-export default function TicketList({ onOpened }) {
+type TicketListProps = {
+    onOpened: (ticketId: string) => void;
+};
+
+export default function TicketList({ onOpened }: TicketListProps) {
     const [status, setStatus] = useState<TicketStatus | "">("");
     const [assignee, setAssignee] = useState("");
     const [limit, setLimit] = useState(10);
@@ -48,8 +52,8 @@ export default function TicketList({ onOpened }) {
                             <td>{new Date(t.updatedAt).toLocaleString()}</td>
                             <td>
                                 <button
-                                    onClick={(e) => {
-                                        // e.stopPropagation();
+                                    type="button"
+                                    onClick={() => {
                                         onOpened(t.id);
                                     }}
                                 >
